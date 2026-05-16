@@ -1,12 +1,3 @@
-/**
- * Thin client over the evaluation server's depot/vehicle endpoints.
- *
- * We reuse the same token-management logic as the logger by importing
- * its (unexported) getToken via a small shim. To keep things decoupled,
- * we re-implement the auth call here — it's a handful of lines and
- * avoids leaking the logger's internals.
- */
-
 const axios = require('axios');
 
 const BASE_URL =
@@ -44,7 +35,7 @@ async function authedGet(path) {
 
 async function fetchDepots() {
   const data = await authedGet('/depots');
-  // Response shape: { depots: [{ ID, MechanicHours }, ...] }
+  
   if (!data || !Array.isArray(data.depots)) {
     throw new Error('Depot API returned unexpected shape');
   }
@@ -53,7 +44,7 @@ async function fetchDepots() {
 
 async function fetchVehicleTasks() {
   const data = await authedGet('/vehicles');
-  // Response shape: { vehicles: [{ TaskID, Duration, Impact }, ...] }
+ 
   if (!data || !Array.isArray(data.vehicles)) {
     throw new Error('Vehicles API returned unexpected shape');
   }

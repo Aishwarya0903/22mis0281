@@ -1,20 +1,4 @@
-/**
- * 0/1 knapsack scheduler.
- *
- *   tasks:    Array<{ TaskID, Duration, Impact }>
- *   capacity: integer hours budget (sum of MechanicHours across depots)
- *
- * Returns { selected, totalDuration, totalImpact, capacity, skipped }.
- *
- * Implementation notes:
- *   - Classic O(n * W) DP. With ~50 tasks and W in the low hundreds, this
- *     is comfortably fast (well under a millisecond on commodity hardware).
- *   - Durations are assumed to be non-negative integers. The API in the
- *     spec sends integer Duration values, so no rounding is needed.
- *   - Ties on impact are broken in favour of *fewer* tasks (i.e. higher
- *     impact-per-hour), so the planner doesn't burn the mechanics' day on
- *     work that could have been skipped.
- */
+
 
 function solveKnapsack(tasks, capacity) {
   if (!Number.isFinite(capacity) || capacity < 0) {
@@ -27,20 +11,19 @@ function solveKnapsack(tasks, capacity) {
   const cap = Math.floor(capacity);
   const n = tasks.length;
 
-  // dp[w] = best impact achievable using a subset of tasks considered so
-  // far, with total duration exactly <= w. We rebuild incrementally.
+ 
   const dp = new Array(cap + 1).fill(0);
-  // keep[i][w] = was task i chosen when filling capacity w?
+ 
   const keep = Array.from({ length: n }, () => new Uint8Array(cap + 1));
 
   for (let i = 0; i < n; i++) {
     const d = tasks[i].Duration;
     const v = tasks[i].Impact;
 
-    // Guard against bad data — skip rather than crash.
+   
     if (!Number.isFinite(d) || !Number.isFinite(v) || d < 0) continue;
 
-    // Iterate w from high to low so each task is considered once (0/1).
+    
     for (let w = cap; w >= d; w--) {
       const candidate = dp[w - d] + v;
       if (candidate > dp[w]) {
@@ -50,7 +33,7 @@ function solveKnapsack(tasks, capacity) {
     }
   }
 
-  // Backtrack to recover the actual chosen set.
+  
   const selected = [];
   let w = cap;
   for (let i = n - 1; i >= 0; i--) {

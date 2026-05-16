@@ -1,14 +1,4 @@
-/**
- * Reusable logging middleware for the evaluation test server.
- *
- *   const { Log } = require('../logging_middleware/logger');
- *   await Log('backend', 'info', 'route', 'GET /schedule served in 142ms');
- *
- * The function is intentionally fire-and-forget from the caller's
- * perspective: it returns the server's response on success and `null` on
- * failure. It never throws into application code, because a logging
- * failure should not take down a request handler.
- */
+
 
 const axios = require('axios');
 
@@ -32,10 +22,10 @@ const SHARED_PKGS = new Set(['auth', 'config', 'middleware', 'utils']);
 let tokenCache = {
   value: null,
   expiresAtMs: 0,
-  inflight: null,   // dedupe concurrent refreshes
+  inflight: null,   
 };
 
-const TOKEN_SAFETY_WINDOW_MS = 30_000;   // refresh 30s before expiry
+const TOKEN_SAFETY_WINDOW_MS = 30_000;   
 
 function readCredentials() {
   const creds = {
@@ -67,8 +57,7 @@ async function fetchFreshToken() {
     timeout: 8000,
   });
 
-  // The spec example shows expires_in as an absolute Unix timestamp
-  // (seconds), not a duration. Convert to ms.
+ 
   const expiresAtMs = Number(data.expires_in) * 1000;
 
   return {
@@ -102,7 +91,7 @@ async function getToken() {
   return tokenCache.inflight;
 }
 
-// ---- Validation ----------------------------------------------------------
+
 
 function validate(stack, level, pkg) {
   if (!STACKS.has(stack)) {
@@ -125,13 +114,13 @@ function validate(stack, level, pkg) {
   }
 }
 
-// ---- Public API ----------------------------------------------------------
+
 
 async function Log(stack, level, pkg, message) {
   try {
     validate(stack, level, pkg);
   } catch (validationError) {
-    // Caller passed a bad enum — surface it so they fix the bug.
+  
     return { ok: false, reason: 'validation', error: validationError.message };
   }
 
@@ -153,7 +142,7 @@ async function Log(stack, level, pkg, message) {
     );
     return { ok: true, data };
   } catch (err) {
-    // 401 → invalidate cache so the next call re-auths.
+    
     if (err.response && err.response.status === 401) {
       tokenCache = { value: null, expiresAtMs: 0, inflight: null };
     }

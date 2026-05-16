@@ -8,17 +8,7 @@ const { solveKnapsack, sumMechanicHours } = require('./scheduler');
 const app = express();
 app.use(express.json());
 
-// ---- Routes --------------------------------------------------------------
 
-/**
- * GET /schedule
- *
- * Pulls depots + vehicle tasks from the protected APIs, solves the knapsack,
- * and returns the selected task IDs plus totals.
- *
- * Query params:
- *   ?dryRun=1  → returns inputs alongside the schedule for debugging
- */
 app.get('/schedule', async (req, res) => {
   const startedAt = Date.now();
 
@@ -78,26 +68,24 @@ app.get('/schedule', async (req, res) => {
   res.json(body);
 });
 
-/** Health check. */
+
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', uptimeSec: Math.round(process.uptime()) });
 });
 
-// ---- Error handler -------------------------------------------------------
 
-// 404 fallthrough
 app.use((req, res) => {
   res.status(404).json({ error: 'not_found', path: req.path });
 });
 
-// Last-resort error handler — Log() never throws so this rarely fires.
+
 app.use(async (err, req, res, next) => {
   await Log('backend', 'fatal', 'handler',
     `unhandled error on ${req.method} ${req.path}: ${err.message}`);
   res.status(500).json({ error: 'internal_error' });
 });
 
-// ---- Boot ----------------------------------------------------------------
+
 
 const PORT = Number(process.env.PORT) || 3000;
 if (require.main === module) {

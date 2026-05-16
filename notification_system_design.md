@@ -546,4 +546,4 @@ running at write time instead of read time.
   near-identical notifications, the inbox fills with duplicates.
   De-duplication is an obvious next step.
 
-These aren't blockers for shipping v1 — they're a roadmap for v2.
+

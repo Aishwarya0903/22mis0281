@@ -1,27 +1,16 @@
 /**
- * Priority scorer for the Priority Inbox feature (Stage 6).
- *
- * Score is a combination of:
- *   - Type weight: Placement > Result > Event
- *   - Recency:     fresher notifications outweigh stale ones
- *
- * Formula
- * -------
- *   score = typeWeight * recencyFactor
- *   typeWeight     ∈ { Placement: 3, Result: 2, Event: 1 }
- *   recencyFactor  = 0.5 ^ (ageHours / HALF_LIFE_HOURS)
- *
- * With HALF_LIFE_HOURS = 168 (one week), a fresh placement
- * notification scores 3.0; a week later the same notification scores
- * 1.5; two weeks later 0.75. An Event notification has to be very
- * recent to outrank a stale Placement, which matches the "placement
- * > result > event" requirement from the spec.
- *
- * Why exponential decay and not linear? Linear decay (1 - age / max)
- * has a hard cutoff and treats the gap between "2 hours old" and "5
- * hours old" the same as "8 days old" vs "11 days old", which is the
- * wrong shape for a notifications inbox where the user cares most
- * about the last 24 hours.
+ Priority scorer for the Priority Inbox feature (Stage 6).
+ 
+ Score is a combination of:
+ - Type weight: Placement > Result > Event
+ - Recency:     fresher notifications outweigh stale ones
+ 
+ *Formula
+ score = typeWeight * recencyFactor
+ typeWeight     ∈ { Placement: 3, Result: 2, Event: 1 }
+ recencyFactor  = 0.5 ^ (ageHours / HALF_LIFE_HOURS)
+ 
+ 
  */
 
 const TYPE_WEIGHTS = Object.freeze({

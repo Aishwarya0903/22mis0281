@@ -1,0 +1,12 @@
+{
+  "name": "logging-middleware",
+  "version": "1.0.0",
+  "description": "Reusable Log() that ships structured logs to the evaluation test server.",
+  "main": "logger.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.7"
+  }
+}
